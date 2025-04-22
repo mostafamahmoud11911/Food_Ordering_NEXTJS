@@ -84,7 +84,7 @@ model Product {
   updatedAt   DateTime       @updatedAt
   sizes       Size[]
   extras      Extra[]
-  category    Category       @relation(fields: [categoryId], references: [id])
+  category    Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId  String
   orders      OrderProduct[]
 }
