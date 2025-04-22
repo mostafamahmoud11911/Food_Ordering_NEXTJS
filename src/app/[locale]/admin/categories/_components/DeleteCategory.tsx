@@ -5,34 +5,47 @@ import { Languages } from '@/constants/enums';
 import { Translations } from '@/types/translations';
 import { DeleteIcon, Loader } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { deleteCategory } from '../_action/category';
 import { toast } from '@/hooks/use-toast';
 
-export default function DeleteCategory({ id, translations }: { id: string,translations: Translations }) {
+export default function DeleteCategory({ id, translations }: { id: string, translations: Translations }) {
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [state, setState] = useState<{ pending: boolean; status: number | null; message: string | undefined; }>({
+        pending: false,
+        status: null,
+        message: "",
+    });
     const { locale } = useParams();
 
-
+console.log(id,"id");
     async function handleDelete() {
-        setLoading(true)
         try {
+            setState((prev) => {
+                return { ...prev, pending: true };
+            });
             const res = await deleteCategory(id);
-            toast({
-                title: res.message,
-                className: "text-green-400"
-            })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            setState((prev) => {
+                return { ...prev, status: res.status, message: res.message };
+            });
         } catch (error) {
-            toast({
-                title: translations.admin.categories.deleteError,
-                className: "text-destructive"
-            })
-        }finally{
-            setLoading(false)
+            console.log(error);
+        } finally {
+            setState((prev) => {
+                return { ...prev, pending: false };
+            });
         }
     }
+
+
+    useEffect(() => {
+        if (state.message && state.status && !state.pending) {
+            toast({
+                title: state.message,
+                className: state.status === 200 ? "text-green-400" : "text-destructive",
+            });
+        }
+    }, [state.pending, state.message, state.status]);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -51,11 +64,11 @@ export default function DeleteCategory({ id, translations }: { id: string,transl
                         {translations.admin.categories.delete}
                     </DialogTitle>
                 </DialogHeader>
-                    <DialogFooter className="mt-10">
-                        <Button type="submit" disabled={loading} onClick={handleDelete}>
-                            {loading ? <Loader /> : translations.delete}
-                        </Button>
-                    </DialogFooter>
+                <DialogFooter className="mt-10">
+                    <Button type="submit" disabled={state.pending} onClick={handleDelete}>
+                        {state.pending ? <Loader /> : translations.delete}
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     )

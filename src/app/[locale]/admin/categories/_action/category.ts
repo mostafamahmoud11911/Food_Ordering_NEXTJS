@@ -94,11 +94,11 @@ export const updateCategory = async (
 export const deleteCategory = async (id: string)=> {
     const locale = await gtCurrentLocale();
     const translations = await getTrans(locale);
-  
+  console.log(id,"id");
     try {
       await db.category.delete({
         where: {
-          id,
+          id: id,
         },
       });
       revalidatePath(`/${locale}/${Routes.ADMIN}/${Pages.CATEGORIES}`);
@@ -108,7 +108,7 @@ export const deleteCategory = async (id: string)=> {
         message: translations?.messages.deleteCategorySucess,
       };
     } catch (error) {
-      console.error(error);
+      console.log(error);
       return {
         status: 500,
         message: translations?.messages.unexpectedError,
