@@ -44,7 +44,7 @@ export default async function Hero() {
                 </div>
                 <div className='relative hidden md:block'>
                     <Image
-                        src='/assets/images/pizza.png'
+                        src='/assets/images/pizza.webp'
                         alt='Pizza'
                         fill
                         className='object-contain'
