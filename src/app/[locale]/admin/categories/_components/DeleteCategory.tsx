@@ -18,7 +18,7 @@ export default function DeleteCategory({ id, translations }: { id: string, trans
     });
     const { locale } = useParams();
 
-console.log(id,"id");
+
     async function handleDelete() {
         try {
             setState((prev) => {

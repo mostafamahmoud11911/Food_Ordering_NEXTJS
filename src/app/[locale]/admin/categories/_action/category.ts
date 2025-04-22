@@ -94,7 +94,7 @@ export const updateCategory = async (
 export const deleteCategory = async (id: string)=> {
     const locale = await gtCurrentLocale();
     const translations = await getTrans(locale);
-  console.log(id,"id");
+
     try {
       await db.category.delete({
         where: {
